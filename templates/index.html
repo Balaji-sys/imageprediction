@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaf Disease Detection</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<center>
+<div class="container">
+    <h1 style="color: rgb(255, 255, 255);">Leaf Disease Detection</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="leaf" style="color: white;" required>
+        <br><br>
+        <button type="submit">Predict Leaf Disease</button>
+    </form>
+
+    {% if image %}
+        <br>
+        <img src="{{ image }}" width="250">
+    {% endif %}
+
+    {% if prediction %}
+        <h3 style="color: white;">Predicted Disease:</h3>
+        <h2 style="color: rgb(32, 254, 3);">{{ prediction }}</h2>
+    {% endif %}
+</div>
+</center>
+</body>
+</html>
