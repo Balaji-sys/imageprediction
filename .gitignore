@@ -1,0 +1,8 @@
+venv/
+.venv/
+__pycache__/
+*.zip
+*.h5
+PlantVillage/
+plantvillage-dataset/
+static/uploads/
