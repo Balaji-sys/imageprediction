@@ -11,7 +11,7 @@ import gdown
 
 # Model download - only if not already present
 MODEL_PATH = "plant_model.h5"
-FILE_ID = "இங்க உன் File ID போடு"
+FILE_ID = "1p37FXVRm5sYNDmy5xtVRaCLq_wd7tipo"
 
 if not os.path.exists(MODEL_PATH):
     print("Downloading model...")
