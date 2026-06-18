@@ -1,0 +1,7 @@
+PlantVillage/
+static/uploads/
+.venv/
+__pycache__/
+*.pyc
+.vscode/
+.git/
