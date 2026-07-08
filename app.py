@@ -3,36 +3,21 @@ import numpy as np
 import json
 import os
 import PIL.Image as Image
-import tensorflow as tf
-
-
-import os
-import gdown
-
-# Model download - only if not already present
-MODEL_PATH = "plant_model.h5"
-FILE_ID = "https://drive.google.com/file/d/1p37FXVRm5sYNDmy5xtVRaCLq_wd7tipo/view?usp=drive_link"
-
-if not os.path.exists(MODEL_PATH):
-    print("Downloading model...")
-    gdown.download(f"https://drive.google.com/file/d/1p37FXVRm5sYNDmy5xtVRaCLq_wd7tipo/view?usp=drive_link", MODEL_PATH, quiet=False)
-    print("Model downloaded!")
+try:
+    import tflite_runtime.interpreter as tflite
+except ImportError:
+    import tensorflow.lite as tflite
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# Load model from SavedModel format
-try:
-    # Try loading the new SavedModel format first
-    model = tf.keras.models.load_model('plant_model_new')
-except Exception as e:
-    # Fallback to old h5 format
-    model = tf.keras.models.load_model('plant_model.h5', compile=False)
+# Load TFLite model
+MODEL_PATH = "plant_model.tflite"
+interpreter = tflite.Interpreter(model_path=MODEL_PATH)
+interpreter.allocate_tensors()
 
-
-
-
-
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 # Load class indices
 with open('class_indices.json', 'r') as f:
@@ -51,7 +36,13 @@ def predict_image(image_path):
     img = np.array(img, dtype=np.float32) / 255.0  # Normalize to [0, 1]
     img = np.expand_dims(img, axis=0)
 
-    prediction = model.predict(img, verbose=0)
+    # Set input tensor
+    interpreter.set_tensor(input_details[0]['index'], img)
+    # Run inference
+    interpreter.invoke()
+    # Get output tensor
+    prediction = interpreter.get_tensor(output_details[0]['index'])
+
     class_id = np.argmax(prediction[0])
     confidence = float(prediction[0][class_id])
     
