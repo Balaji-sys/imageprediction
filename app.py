@@ -10,6 +10,7 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Load TFLite model
 MODEL_PATH = "plant_model.tflite"
