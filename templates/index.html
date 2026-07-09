@@ -104,22 +104,6 @@
                         </div>
 
                         {% if top_3 %}
-                        <div class="top-predictions-box">
-                            <h5 class="predictions-heading">Suspect Analysis</h5>
-                            <div class="predictions-list">
-                                {% for pred in top_3 %}
-                                <div class="prediction-item">
-                                    <div class="prediction-info">
-                                        <span class="prediction-label">{{ pred.class_formatted }}</span>
-                                        <span class="prediction-pct">{{ (pred.confidence * 100) | round | int }}%</span>
-                                    </div>
-                                    <div class="prediction-bar-bg">
-                                        <div class="prediction-bar-fill" style="width: {{ (pred.confidence * 100) | round | int }}%"></div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
                         {% endif %}
                     </div>
                 </div>
