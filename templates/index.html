@@ -194,14 +194,18 @@
                 const cleanName = formatPrediction(rawPrediction);
                 document.getElementById('formatted-prediction').innerText = cleanName;
 
-                // Set confidence value & progress bar
+                // Set confidence value & progress bar if elements exist
                 const pct = Math.round(confidence * 100);
-                document.getElementById('confidence-percentage').innerText = pct + '%';
-                
-                // Animate progress bar fill after a small delay for premium feel
-                setTimeout(() => {
-                    document.getElementById('confidence-bar').style.width = pct + '%';
-                }, 150);
+                const confidencePercentageEl = document.getElementById('confidence-percentage');
+                const confidenceBarEl = document.getElementById('confidence-bar');
+                if (confidencePercentageEl) {
+                    confidencePercentageEl.innerText = pct + '%';
+                }
+                if (confidenceBarEl) {
+                    setTimeout(() => {
+                        confidenceBarEl.style.width = pct + '%';
+                    }, 150);
+                }
 
                 // Set status style and alerts based on health status
                 const isHealthy = rawPrediction.toLowerCase().includes('healthy');
