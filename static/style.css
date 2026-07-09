@@ -534,3 +534,27 @@ body {
         font-size: 1rem;
     }
 }
+
+/* Desktop Scroll Locking */
+@media (min-width: 769px) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    body {
+        padding: 0;
+    }
+    
+    .app-container {
+        gap: 15px;
+    }
+    
+    .diagnostic-card {
+        padding: 25px 35px;
+    }
+    
+    .divider {
+        margin: 20px 0;
+    }
+}

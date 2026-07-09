@@ -92,7 +92,7 @@
                         
 
                         <div class="action-alert" id="status-alert">
-                            <div class="alert-icon-container">
+                            <div class="alert-icon-container" id="alert-icon-container">
                                 <svg class="alert-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="alert-svg">
                                     <!-- Dynamic SVG Path via JS -->
                                 </svg>
@@ -208,33 +208,49 @@
                 }
 
                 // Set status style and alerts based on health status
-                const isHealthy = rawPrediction.toLowerCase().includes('healthy');
-                const badge = document.getElementById('status-badge');
-                const alertBox = document.getElementById('status-alert');
-                const alertHeading = document.getElementById('alert-heading');
-                const alertDescription = document.getElementById('alert-description');
-                const alertSvg = document.getElementById('alert-svg');
+                try {
+                    const isHealthy = rawPrediction.toLowerCase().includes('healthy');
+                    const badge = document.getElementById('status-badge');
+                    const alertBox = document.getElementById('status-alert');
+                    const alertHeading = document.getElementById('alert-heading');
+                    const alertDescription = document.getElementById('alert-description');
+                    const iconContainer = document.getElementById('alert-icon-container');
 
-                if (isHealthy) {
-                    badge.classList.add('status-healthy');
-                    alertBox.classList.add('alert-success');
-                    alertHeading.innerText = "Specimen is Healthy";
-                    alertDescription.innerText = "No action is needed! Continue regular care, ensuring the plant receives adequate watering and natural sunlight.";
-                    
-                    // Success icon
-                    alertSvg.innerHTML = `
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    `;
-                } else {
-                    badge.classList.add('status-warning');
-                    alertBox.classList.add('alert-danger');
-                    alertHeading.innerText = "Disease Detected";
-                    alertDescription.innerText = `This leaf shows signs of disease. We recommend isolating this plant, pruning infected leaves, and applying targeted organic treatment for ${cleanName.split(':').pop().trim()}.`;
-                    
-                    // Danger/Warning icon
-                    alertSvg.innerHTML = `
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    `;
+                    if (isHealthy) {
+                        if (badge) badge.classList.add('status-healthy');
+                        if (alertBox) alertBox.classList.add('alert-success');
+                        if (alertHeading) alertHeading.innerText = "Specimen is Healthy";
+                        if (alertDescription) alertDescription.innerText = "No action is needed! Continue regular care, ensuring the plant receives adequate watering and natural sunlight.";
+                        
+                        // Success icon
+                        if (iconContainer) {
+                            iconContainer.innerHTML = `
+                                <svg class="alert-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            `;
+                        }
+                    } else {
+                        if (badge) badge.classList.add('status-warning');
+                        if (alertBox) alertBox.classList.add('alert-danger');
+                        if (alertHeading) alertHeading.innerText = "Disease Detected";
+                        if (alertDescription) {
+                            const leafType = cleanName.includes(':') ? cleanName.split(':').pop().trim() : cleanName;
+                            alertDescription.innerText = `This leaf shows signs of disease. We recommend isolating this plant, pruning infected leaves, and applying targeted organic treatment for ${leafType}.`;
+                        }
+                        
+                        // Danger/Warning icon
+                        if (iconContainer) {
+                            iconContainer.innerHTML = `
+                                <svg class="alert-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            `;
+                        }
+                    }
+                    console.log("Diagnostic recommendations loaded successfully.");
+                } catch (e) {
+                    console.error("Error setting diagnostic recommendations:", e);
                 }
             })();
         {% endif %}
