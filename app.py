@@ -31,6 +31,12 @@ with open('class_indices.json', 'r') as f:
         # Keys are already ints
         class_names = class_indices
 
+def format_prediction(name):
+    if not name:
+        return ""
+    formatted = name.replace("___", ": ").replace("__", " ").replace("_", " ")
+    return " ".join([w.capitalize() for w in formatted.split()])
+
 def predict_image(image_path):
     img = Image.open(image_path).convert("RGB")
     img = img.resize((224, 224))
@@ -47,32 +53,47 @@ def predict_image(image_path):
     class_id = np.argmax(prediction[0])
     confidence = float(prediction[0][class_id])
     
+    # Extract Top 3 predictions
+    top_3_indices = np.argsort(prediction[0])[::-1][:3]
+    top_3 = []
+    for idx in top_3_indices:
+        class_name = class_names[idx]
+        score = float(prediction[0][idx])
+        top_3.append({
+            'class': class_name,
+            'class_formatted': format_prediction(class_name),
+            'confidence': score
+        })
+    
     # Debug: Print raw prediction probabilities
     print(f"DEBUG: Raw predictions: {prediction[0]}")
     print(f"DEBUG: Predicted class_id: {class_id}, Confidence: {confidence:.4f}")
     print(f"DEBUG: Predicted class: {class_names[class_id]}")
     
-    return class_names[class_id], confidence
+    return class_names[class_id], confidence, top_3
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction = None
     image_path = None
     confidence_score = None
+    top_3_predictions = None
 
     if request.method == 'POST':
         file = request.files.get('leaf')
         if file and file.filename != "":
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(image_path)
-            plant_class, confidence = predict_image(image_path)
+            plant_class, confidence, top_3 = predict_image(image_path)
             prediction = f"{plant_class}"
             confidence_score = confidence
+            top_3_predictions = top_3
 
     return render_template('index.html',
                            prediction=prediction,
                            image=image_path,
-                           confidence=confidence_score)
+                           confidence=confidence_score,
+                           top_3=top_3_predictions)
 
 if __name__ == '__main__':
     app.run(debug=True)
