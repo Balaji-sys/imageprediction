@@ -58,6 +58,7 @@ def predict_image(image_path):
 def index():
     prediction = None
     image_path = None
+    confidence_score = None
 
     if request.method == 'POST':
         file = request.files.get('leaf')
@@ -66,10 +67,12 @@ def index():
             file.save(image_path)
             plant_class, confidence = predict_image(image_path)
             prediction = f"{plant_class}"
+            confidence_score = confidence
 
     return render_template('index.html',
                            prediction=prediction,
-                           image=image_path)
+                           image=image_path,
+                           confidence=confidence_score)
 
 if __name__ == '__main__':
     app.run(debug=True)

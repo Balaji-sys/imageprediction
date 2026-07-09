@@ -2,30 +2,250 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Leaf Disease Detection</title>
-   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf Disease Analyzer - Premium Plant Health Diagnostic Tool</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<center>
-<div class="container">
-    <h1 style="color: rgb(255, 255, 255);">Leaf Disease Detection</h1>
+    <div class="background-overlay"></div>
+    
+    <main class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="leaf-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 16.24 4.64 19.86 8.35 21.28C8.12 20.31 8 19.26 8 18C8 12.48 12.48 8 18 8C19.26 8 20.31 8.12 21.28 8.35C19.86 4.64 16.24 2 12 2Z" fill="url(#leaf-gradient)"/>
+                    <path d="M21.28 8.35C21.75 9.49 22 10.72 22 12C22 17.52 17.52 22 12 22C10.72 22 9.49 21.75 8.35 21.28C9.59 20.17 11.21 19.27 13.06 18.66C13.88 18.39 14.68 18.2 15.44 18.08C15.17 16.32 15.34 14.52 16 13C16.89 11 18.59 9.5 20.67 8.7C20.89 8.57 21.1 8.46 21.28 8.35Z" fill="url(#leaf-gradient-2)"/>
+                    <defs>
+                        <linearGradient id="leaf-gradient" x1="2" y1="2" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#10b981" />
+                            <stop offset="100%" stop-color="#047857" />
+                        </linearGradient>
+                        <linearGradient id="leaf-gradient-2" x1="8" y1="8" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#34d399" />
+                            <stop offset="100%" stop-color="#065f46" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1 class="logo-title">LeafShield</h1>
+            </div>
+            <p class="logo-subtitle">Instant AI-powered plant health analysis and diagnostics</p>
+        </header>
 
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="leaf" style="color: white;" required>
-        <br><br>
-        <button type="submit">Predict Leaf Disease</button>
-    </form>
+        <section class="diagnostic-card">
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" name="leaf" id="file-input" accept="image/*" required>
+                    
+                    <div class="drop-zone-prompt" id="drop-zone-prompt">
+                        <div class="upload-icon-container">
+                            <svg class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                        </div>
+                        <p class="primary-prompt">Drag & drop your leaf image here</p>
+                        <p class="secondary-prompt">or click to browse files</p>
+                        <span class="file-limits">Supports JPG, PNG, WEBP (Max 10MB)</span>
+                    </div>
 
-    {% if image %}
-        <br>
-        <img src="{{ image }}" width="250">
-    {% endif %}
+                    <div class="preview-container hidden" id="preview-container">
+                        <img id="image-preview" src="" alt="Selected leaf preview">
+                        <button type="button" class="remove-preview-btn" id="remove-btn" title="Remove image">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
-    {% if prediction %}
-        <h3 style="color: white;">Predicted Disease:</h3>
-        <h2 style="color: rgb(32, 254, 3);">{{ prediction }}</h2>
-    {% endif %}
-</div>
-</center>
+                <button type="submit" class="submit-btn disabled" id="submit-btn" disabled>
+                    <span>Analyze Plant Health</span>
+                    <svg class="btn-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Results Display -->
+            {% if image or prediction %}
+            <div class="results-wrapper">
+                <div class="divider"></div>
+                
+                <h2 class="results-title">Diagnostic Results</h2>
+                
+                <div class="results-layout">
+                    <div class="result-image-box">
+                        <img src="{{ image }}" alt="Uploaded leaf specimen">
+                    </div>
+                    
+                    <div class="result-details-box">
+                        <div class="status-badge" id="status-badge">
+                            <span class="badge-dot"></span>
+                            <span class="badge-text" id="formatted-prediction">Analyzing...</span>
+                        </div>
+                        
+                        <div class="confidence-container">
+                            <div class="confidence-labels">
+                                <span class="confidence-title">AI Confidence</span>
+                                <span class="confidence-value" id="confidence-percentage">0%</span>
+                            </div>
+                            <div class="confidence-bar-bg">
+                                <div class="confidence-bar-fill" id="confidence-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="action-alert" id="status-alert">
+                            <div class="alert-icon-container">
+                                <svg class="alert-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="alert-svg">
+                                    <!-- Dynamic SVG Path via JS -->
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4 class="alert-heading" id="alert-heading">Diagnostic Status</h4>
+                                <p class="alert-desc" id="alert-description">Loading diagnostic recommendations...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 LeafShield Diagnostics. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <!-- Client-side Interactive Logic -->
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const prompt = document.getElementById('drop-zone-prompt');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeBtn = document.getElementById('remove-btn');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // File selection / drag-drop handlers
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    prompt.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    submitBtn.classList.remove('disabled');
+                    submitBtn.removeAttribute('disabled');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        ['dragleave', 'dragend'].forEach(type => {
+            dropZone.addEventListener(type, () => {
+                dropZone.classList.remove('drag-over');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.value = '';
+            imagePreview.src = '';
+            previewContainer.classList.add('hidden');
+            prompt.classList.remove('hidden');
+            submitBtn.classList.add('disabled');
+            submitBtn.setAttribute('disabled', 'true');
+        });
+
+        dropZone.addEventListener('click', () => {
+            if (previewContainer.classList.contains('hidden')) {
+                fileInput.click();
+            }
+        });
+
+        // Format prediction results dynamically on page load
+        {% if prediction %}
+            (function() {
+                const rawPrediction = "{{ prediction }}";
+                const confidence = {{ confidence if confidence is not none else 0.0 }};
+                
+                // Format the prediction string
+                function formatPrediction(name) {
+                    if (!name) return "";
+                    // Replace triple underscores with ": " and double underscores with " "
+                    let formatted = name.replace(/___/g, ': ').replace(/__+/g, ' ').replace(/_/g, ' ');
+                    // Capitalize words
+                    return formatted.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                }
+
+                const cleanName = formatPrediction(rawPrediction);
+                document.getElementById('formatted-prediction').innerText = cleanName;
+
+                // Set confidence value & progress bar
+                const pct = Math.round(confidence * 100);
+                document.getElementById('confidence-percentage').innerText = pct + '%';
+                
+                // Animate progress bar fill after a small delay for premium feel
+                setTimeout(() => {
+                    document.getElementById('confidence-bar').style.width = pct + '%';
+                }, 150);
+
+                // Set status style and alerts based on health status
+                const isHealthy = rawPrediction.toLowerCase().includes('healthy');
+                const badge = document.getElementById('status-badge');
+                const alertBox = document.getElementById('status-alert');
+                const alertHeading = document.getElementById('alert-heading');
+                const alertDescription = document.getElementById('alert-description');
+                const alertSvg = document.getElementById('alert-svg');
+
+                if (isHealthy) {
+                    badge.classList.add('status-healthy');
+                    alertBox.classList.add('alert-success');
+                    alertHeading.innerText = "Specimen is Healthy";
+                    alertDescription.innerText = "No action is needed! Continue regular care, ensuring the plant receives adequate watering and natural sunlight.";
+                    
+                    // Success icon
+                    alertSvg.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    `;
+                } else {
+                    badge.classList.add('status-warning');
+                    alertBox.classList.add('alert-danger');
+                    alertHeading.innerText = "Disease Detected";
+                    alertDescription.innerText = `This leaf shows signs of disease. We recommend isolating this plant, pruning infected leaves, and applying targeted organic treatment for ${cleanName.split(':').pop().trim()}.`;
+                    
+                    // Danger/Warning icon
+                    alertSvg.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    `;
+                }
+            })();
+        {% endif %}
+    </script>
 </body>
 </html>

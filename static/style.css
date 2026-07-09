@@ -1,37 +1,536 @@
-body{
-    background-image: url(backgroundpicture.avif);
-     min-height: 100vh;
+/* -------------------------------------------------------------
+ * Nature Dark Mode Glassmorphism Style System
+ * ------------------------------------------------------------- */
+
+/* Reset & Base Variables */
+:root {
+    --bg-dark: #070d0a;
+    --bg-card: rgba(15, 27, 21, 0.7);
+    --border-color: rgba(255, 255, 255, 0.07);
+    --border-hover: rgba(16, 185, 129, 0.3);
+    
+    --primary: #10b981;
+    --primary-hover: #34d399;
+    --primary-grad: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --text-dim: #6b7280;
+    
+    --status-healthy: #10b981;
+    --status-warning: #f59e0b;
+    --status-danger: #ef4444;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.5;
+    padding: 20px 0;
+}
+
+/* Background image overlay and gradient */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: linear-gradient(135deg, rgba(7, 13, 10, 0.95) 0%, rgba(17, 26, 21, 0.9) 100%), url('backgroundpicture.avif');
     background-size: cover;
     background-position: center;
-    overflow-y: hidden;
+    background-repeat: no-repeat;
+    transform: scale(1.02);
 }
-.container{
-    width: 500px;
-    height: 500px;
-    background-color: transparent;
-    backdrop-filter: blur(25px);
-    border-style: solid;
+
+/* App Container Layout */
+.app-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Header Styles */
+.app-header {
+    text-align: center;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.leaf-logo {
+    width: 42px;
+    height: 42px;
+    filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.3));
+}
+
+.logo-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(to right, #ffffff, #a7f3d0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+/* Diagnostic Card - Glassmorphic */
+.diagnostic-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
     padding: 40px;
-    margin: 10%;
-   
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-h1{
+
+.diagnostic-card:hover {
+    border-color: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6), 0 0 40px rgba(16, 185, 129, 0.05);
+}
+
+/* Drag and Drop Zone */
+.drop-zone {
+    width: 100%;
+    min-height: 240px;
+    border: 2px dashed var(--border-color);
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding: 30px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--primary);
+    background: rgba(16, 185, 129, 0.03);
+}
+
+#file-input {
+    display: none;
+}
+
+.upload-icon-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.drop-zone:hover .upload-icon-container {
+    transform: translateY(-4px);
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+    color: var(--primary-hover);
+}
+
+.upload-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.drop-zone:hover .upload-icon {
+    color: var(--primary-hover);
+}
+
+.primary-prompt {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.secondary-prompt {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.file-limits {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+/* Image Preview Styles */
+.preview-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f1713;
+}
+
+.preview-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.remove-preview-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+
+.remove-preview-btn:hover {
+    background: var(--status-danger);
+    transform: scale(1.1);
+}
+
+.remove-preview-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Submit Action Button */
+.submit-btn {
+    width: 100%;
+    height: 54px;
+    border-radius: 14px;
+    border: none;
+    background: var(--primary-grad);
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+}
+
+.submit-btn:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+}
+
+.submit-btn:active:not(.disabled) {
+    transform: translateY(0);
+}
+
+.submit-btn.disabled {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-arrow {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+/* Section Divider */
+.divider {
+    height: 1px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+    margin: 35px 0;
+}
+
+/* Diagnostic Results Container */
+.results-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+}
+
+.results-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.result-image-box {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.result-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.result-details-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Status Badges */
+.status-badge {
+    align-self: flex-start;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-healthy {
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--status-healthy);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+.status-healthy .badge-dot {
+    background: var(--status-healthy);
+    box-shadow: 0 0 8px var(--status-healthy);
+}
+
+.status-warning {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--status-danger);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+.status-warning .badge-dot {
+    background: var(--status-danger);
+    box-shadow: 0 0 8px var(--status-danger);
+}
+
+/* Confidence Score Bar */
+.confidence-container {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.confidence-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.confidence-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.confidence-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.confidence-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.confidence-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: var(--primary-grad);
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Status Diagnostic Alert Box */
+.action-alert {
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.1);
+    color: #a7f3d0;
+}
+
+.alert-success .alert-icon {
+    color: var(--status-healthy);
+}
+
+.alert-danger {
+    background: rgba(245, 158, 11, 0.05);
+    border-color: rgba(245, 158, 11, 0.1);
+    color: #fde68a;
+}
+
+.alert-danger .alert-icon {
+    color: var(--status-warning);
+}
+
+.alert-icon-container {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.alert-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.alert-heading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.alert-desc {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+
+/* Footer Styles */
+.app-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-dim);
     margin-top: 10px;
 }
-.box{
-    height: 30px;
-    width: 100%;
-    background-color: rgb(1, 2, 2);
-    color: white;
-    opacity: 0.8;
-    padding-top: 2%;
-    margin-top: 20%;
+
+/* Helper Utilities */
+.hidden {
+    display: none !important;
 }
-img{
-    height: 200px;
-    width: 200px;
-    margin-top: 30px;
+
+/* Keyframes and Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-button{
-    background-color: yellowgreen;
+
+/* -------------------------------------------------------------
+ * Responsive Layout Adaptations (Mobile First Breakpoints)
+ * ------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .results-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .result-image-box {
+        max-width: 320px;
+        margin: 0 auto;
+    }
+    
+    .diagnostic-card {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-title {
+        font-size: 1.8rem;
+    }
+    
+    .logo-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .drop-zone {
+        min-height: 200px;
+        padding: 20px;
+    }
+    
+    .primary-prompt {
+        font-size: 1rem;
+    }
 }
